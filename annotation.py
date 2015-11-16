@@ -26,8 +26,8 @@ class Annotation(object):
                 }
             }
 
-    def from_data(self, date, opponent, data):
-        self.date = datetime.strptime(date,'%d/%m/%Y')
+    def from_dict(self, date, opponent, data):
+        self.date = date
         self.opponent = opponent
         self.player = data['player']
         self.points = data['points']
