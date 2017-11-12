@@ -1,7 +1,9 @@
-from datetime import datetime 
+from datetime import datetime
+
 
 class Game(object):
-    def __init__(self, d = None):
+
+    def __init__(self, d=None):
 
         if not d:
             self.date = None
@@ -47,9 +49,9 @@ class Game(object):
     def get_json(self):
         game = {
             'date': self.date,
-            'opponent' : self.opponent,
-            'result' : self.result,
-            'players' : [],
+            'opponent': self.opponent,
+            'result': self.result,
+            'players': [],
         }
 
         for player in self.players:
@@ -57,8 +59,10 @@ class Game(object):
 
         return game
 
+
 class Player(object):
-    def __init__(self, d = None):
+
+    def __init__(self, d=None):
 
         if not d:
             self.player = ''
@@ -80,4 +84,4 @@ class Player(object):
             "player": self.player,
             "play": self.play,
             "points": self.points,
-            }
+        }
