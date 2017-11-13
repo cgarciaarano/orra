@@ -9,6 +9,8 @@ class Game(object):
             self.date = None
             self.opponent = ''
             self.result = None
+            self.score = None
+            self.opponent_score = None
             self.players = []
         else:
             self.from_dict(d)
@@ -20,44 +22,48 @@ class Game(object):
         self.players.append(Player)
 
     def from_dict(self, d):
-        self.date = d['date']
-        self.opponent = d['opponent']
-        self.result = d['result']
+        self.date = d.get('date')
+        self.opponent = d.get('opponent')
+        self.result = d.get('result')
+        self.opponent_score = d.get('opponent_score')
         self.players = []
 
-        for player in d['players']:
+        for player in d.get('players', []):
             self.add_player(Player(player))
 
     def get_influx_json(self):
         game = []
         for player in self.players:
             game.append({
-                "measurement": "points",
+                "measurement": "game",
                 "tags": {
                     "opponent": self.opponent,
                     "player": player.player,
-                    "play": player.play,
                     "result": self.result,
                 },
                 "time": self.date,
                 "fields": {
-                    "value": player.points
+                    "score": player.points
                 }
             })
+
+        self.calc_score()
+        game.append({
+            "measurement": "game",
+            "tags": {
+                "opponent": self.opponent,
+                "result": self.result,
+            },
+            "time": self.date,
+            "fields": {
+                "game_score": self.score
+                "opponent_score": self.opponent_score
+            }
+        })
         return game
 
-    def get_json(self):
-        game = {
-            'date': self.date,
-            'opponent': self.opponent,
-            'result': self.result,
-            'players': [],
-        }
-
-        for player in self.players:
-            game['players'].append(player.get_json())
-
-        return game
+    def calc_score(self):
+        self.score = map(sum, [p["points"] for p in self.players])
 
 
 class Player(object):
@@ -67,21 +73,12 @@ class Player(object):
         if not d:
             self.player = ''
             self.points = 0
-            self.play = False
         else:
             self.from_dict(d)
 
     def __str__(self):
-        return 'Player: {0} Points: {1} Play: {2}'.format(self.player, self.points, self.play)
+        return 'Player: {0} Points: {1}'.format(self.player, self.points)
 
     def from_dict(self, data):
         self.player = data['player']
         self.points = data['points']
-        self.play = data['play']
-
-    def get_json(self):
-        return {
-            "player": self.player,
-            "play": self.play,
-            "points": self.points,
-        }

@@ -22,7 +22,7 @@ def parse_file(filename):
         opponents = [opponent for opponent in next(reader) if opponent]
 
         for i, date in enumerate(dates):
-            game = models.Game({'date': datetime.strptime(date, '%d/%m/%Y'), 'opponent': opponents[i], 'result': result[i], 'players': []})
+            game = models.Game({'date': datetime.strptime(date, '%d/%m/%Y'), 'opponent': opponents[i], 'result': int(result[i] == 'win'), 'players': []})
             games.append(game)
 
         for row in reader:
