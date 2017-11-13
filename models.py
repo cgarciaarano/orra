@@ -61,14 +61,14 @@ class Game(object):
             },
             "time": self.date,
             "fields": {
-                "game_score": self.score
+                "game_score": self.score,
                 "opponent_score": self.opponent_score
             }
         })
         return game
 
     def calc_score(self):
-        self.score = map(sum, [p["points"] for p in self.players])
+        self.score = sum([p.points for p in self.players])
 
 
 class Player(object):
