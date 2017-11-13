@@ -1,0 +1,30 @@
+version: '3.2'
+
+services:
+
+  # Inputs
+  parser:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: cgarciaarano/orra-parser
+    environment:
+      QUEUE_TOPIC: social_feed
+    depends_on:
+      - influx
+    volumes:
+      - .:/opt/app
+    command: ["orra.csv"]
+
+  # Local services
+  influx:
+    image: influxdb:1.3-alpine
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 8080:3000
+    depends_on:
+      - influx
+    volumes:
+      - /tmp:/var/lib/grafana
