@@ -11,6 +11,7 @@ class Game(object):
             self.result = None
             self.score = None
             self.opponent_score = None
+            self.season = None
             self.players = []
         else:
             self.from_dict(d)
@@ -31,6 +32,9 @@ class Game(object):
         for player in d.get('players', []):
             self.add_player(Player(player))
 
+        # TODO: Calculate season based on date. It should be a date
+        self.season = d.get('season')
+
     def get_influx_json(self):
         game = []
         for player in self.players:
@@ -40,6 +44,7 @@ class Game(object):
                     "opponent": self.opponent,
                     "player": player.player,
                     "result": self.result,
+                    "season": self.season,
                 },
                 "time": self.date,
                 "fields": {
